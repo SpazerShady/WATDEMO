@@ -1,9 +1,9 @@
-# WAT-Monk interactive demo
+# WAT-Monk clickable demo
 
-The standalone prototype contains all 350 mapped WAT-Monk screens, including polished UI exports and UX fallbacks.
+`WAT_MONK_DEMO.html` is a self-contained, clickable WAT-Monk prototype. It rebuilds the supplied designs as live HTML components with working forms, navigation, booking flows, donation flows, religious activities, search, temple operations, and management tools.
 
-- Open `WAT_MONK_DEMO.html` in a modern browser to run the prototype.
+- Open `WAT_MONK_DEMO.html` in a modern browser.
+- Use the small **DEMO** control to switch roles or open the complete 350-screen map.
 - Download `WAT_MONK_DEMO.zip` for a compressed copy.
-- Run `python3 build_demo.py` to rebuild the HTML from the design references in the onboarding workspace.
 
-The demo works offline and has no external runtime dependencies.
+The prototype works offline and has no external runtime dependencies or real payment processing.
