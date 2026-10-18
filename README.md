@@ -7,3 +7,5 @@
 - Download `WAT_MONK_DEMO.zip` for a compressed copy.
 
 The prototype works offline and has no external runtime dependencies or real payment processing.
+
+The demo keeps booking details and statuses synchronized across Home, payment, requests, and history. Temple filters, date selection, funeral packages, the religious calendar, chanting, and meditation timers are interactive for presentation use.
