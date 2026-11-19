@@ -3879,8 +3879,8 @@ document.getElementById('back').addEventListener('click', function(){ var k = hi
 document.getElementById('prev').addEventListener('click', function(){ var i = ORDER.indexOf(cur.key); if (i > 0) open(ORDER[i - 1], true); });
 document.getElementById('next').addEventListener('click', function(){ var i = ORDER.indexOf(cur.key); if (i < ORDER.length - 1) open(ORDER[i + 1], true); });
 drawIndex('');
-var start = (location.hash || '').slice(1); if (S[start]) open(start, false);
-window.addEventListener('hashchange', function(){ var h = (location.hash || '').slice(1); if (S[h]) { if (!cur || cur.key !== h) open(h, !!cur); } else if (h === 'contents' || !h) toIndex(); });
+var start = (location.hash || '').slice(1); if (S[start]) open(start, false); else if (start !== 'contents') open('S01', false); // เปิดเว็บมา → เข้าหน้าแอป (เข้าสู่ระบบ) ทันที · สารบัญอยู่ที่ #contents
+window.addEventListener('hashchange', function(){ var h = (location.hash || '').slice(1); if (S[h]) { if (!cur || cur.key !== h) open(h, !!cur); } else if (h === 'contents') toIndex(); else if (!h && !cur) open('S01', false); });
 })();
 </script>
 
