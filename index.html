@@ -46,15 +46,19 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .vw-nav .ix-btn[disabled]{opacity:.4;cursor:default}
 .vw-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
 .vw-box{position:relative;flex:none}
-.vw-side{flex:none;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;padding:6px 16px;border-radius:999px;color:#fff;font-weight:700;font-size:14.5px;letter-spacing:.01em;box-shadow:0 4px 14px rgba(0,0,0,.12);white-space:nowrap}
-.vw-side small{font-weight:500;font-size:12px;opacity:.92}
-.vw-side[data-side=user]{background:#9A6526}.vw-side[data-side=temple]{background:#2F6B4F}.vw-side[data-side=admin]{background:#4A4E69}
+.vw-side{flex:none;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;white-space:nowrap}
+.vw-sw{display:inline-flex;padding:4px;gap:4px;background:#fff;border:1px solid var(--line);border-radius:999px;box-shadow:0 4px 14px rgba(40,24,8,.10)}
+.vw-sw button{font:inherit;font-weight:700;font-size:14.5px;border:0;border-radius:999px;padding:7px 18px;min-height:40px;cursor:pointer;background:transparent;color:var(--ink2)}
+.vw-sw button:hover{background:rgba(154,101,38,.08)}
+.vw-sw button[data-sw=user][aria-pressed=true]{background:#9A6526;color:#fff}.vw-sw button[data-sw=temple][aria-pressed=true]{background:#2F6B4F;color:#fff}
+.vw-sw button:focus-visible{outline:3px solid #C8963E;outline-offset:2px}
+.vw-adm{font-size:13px;font-weight:700;color:#fff;background:#4A4E69;border-radius:999px;padding:5px 12px}
 .vw-box[data-side=user] .vw-frame{box-shadow:0 0 0 4px #C8963E,0 10px 40px rgba(40,24,8,.22)}
 .vw-box[data-side=temple] .vw-frame{box-shadow:0 0 0 4px #2F6B4F,0 10px 40px rgba(20,50,30,.25)}
 .vw-box[data-side=admin] .vw-frame{box-shadow:0 0 0 4px #4A4E69,0 10px 40px rgba(20,20,40,.25)}
 .vw-sb{font-style:normal;font-size:11px;font-weight:700;color:#fff;border-radius:999px;padding:1px 9px;margin-bottom:2px;white-space:nowrap}
 .vw-sb[data-side=user]{background:#9A6526}.vw-sb[data-side=temple]{background:#2F6B4F}.vw-sb[data-side=admin]{background:#4A4E69}
-.vw-phone .vw-side{margin:0;border-radius:0;width:100%;padding:5px 12px;font-size:13px;box-shadow:none}.vw-phone .vw-side small{display:none}
+.vw-phone .vw-side{margin:0;width:100%;padding:4px 6px;background:var(--panel);border-bottom:1px solid var(--line)}.vw-phone .vw-sw{display:flex;width:100%;box-shadow:none}.vw-phone .vw-sw button{flex:1;font-size:13px;padding:5px 8px;min-height:36px}.vw-phone .vw-adm{display:none}
 .vw-phone .vw-box .vw-frame{box-shadow:none}.vw-phone .vw-sb{display:none}
 .ix-side{margin:30px 0 4px;padding:10px 16px;border-radius:14px;color:#fff;font-family:var(--f-display);font-size:19px;display:flex;align-items:center;gap:10px}
 .ix-side small{font-family:var(--f-body);font-size:12.5px;font-weight:500;opacity:.92}
@@ -81,7 +85,7 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
   <div id="secs"></div>
 </div>
 <div id="vw" class="vw" hidden>
-  <div class="vw-stage"><div class="vw-side" id="vwSide" role="note"></div><div class="vw-box" id="box"><div class="vw-frame" id="frame"></div></div></div>
+  <div class="vw-stage"><div class="vw-side" id="vwSide"><div class="vw-sw" role="group" aria-label="สลับฝั่งแอป"><button type="button" data-sw="user" aria-pressed="false"><span aria-hidden="true">📱</span> แอปผู้ใช้ทั่วไป</button><button type="button" data-sw="temple" aria-pressed="false"><span aria-hidden="true">🛕</span> แอปฝั่งวัด</button></div><span class="vw-adm" hidden>🛠 แอดมินแพลตฟอร์ม</span></div><div class="vw-box" id="box"><div class="vw-frame" id="frame"></div></div></div>
   <p class="vw-note">ปุ่ม “ก่อนหน้า / ถัดไป” เลื่อนตามลำดับบนแคนวาส · ปุ่มในหน้าจอทำงานตามลิงก์ที่ตั้งไว้ในต้นแบบ</p>
   <nav class="vw-bar" aria-label="แถบนำทางต้นแบบ">
     <div class="vw-nav"><button type="button" class="ix-btn ghost" id="prev" aria-label="หน้าก่อนหน้าในลำดับแคนวาส">‹ ก่อนหน้า</button><button type="button" class="ix-btn ghost" id="toIx">สารบัญ</button></div>
@@ -3956,6 +3960,12 @@ function fit(){
   if (ph !== PH){ PH = ph; layoutScreen(); }
 }
 window.addEventListener('resize', fit);
+document.getElementById('vwSide').addEventListener('click', function(e){ // สลับฝั่งแอป: กลับไปหน้าล่าสุดของฝั่งนั้น (ครั้งแรก: หน้าแรกของฝั่ง)
+  var b = e.target.closest('[data-sw]'); if (!b) return; var sd = b.getAttribute('data-sw');
+  if (cur && sideOf(cur.key) === sd) return;
+  var last = CTX.lastScr && CTX.lastScr[sd], target = last && S[last] ? last : (sd === 'temple' ? 'TM01' : 'Main');
+  open(target, true);
+});
 window.WM_ACT = {speed: function(x){ ACT_SPEED = x; }}; // ใช้ในชุดทดสอบ
 document.getElementById('vwExp').addEventListener('click', function(){ // ปุ่มทดสอบของตัวดูต้นแบบ (อยู่นอกจอแอป)
   if (this.getAttribute('data-out')){ payNew(); toast('เริ่มนับเวลาชำระ 30 นาทีใหม่'); }
@@ -3980,7 +3990,9 @@ function open(key, push){
   ixEl.hidden = true; vwEl.hidden = false;
   document.getElementById('vwId').textContent = key; document.getElementById('vwTitle').textContent = cardTitle(key);
   var sd = sideOf(key), si = SIDES[sd], rb = document.getElementById('vwSide'), sb = document.getElementById('vwSb');
-  rb.setAttribute('data-side', sd); rb.innerHTML = '<span aria-hidden="true">' + si[0] + '</span><span>' + si[1] + '</span><small>· ' + si[2] + '</small>';
+  rb.setAttribute('data-side', sd); (CTX.lastScr = CTX.lastScr || {})[sd] = key; saveCtx();
+  [].forEach.call(rb.querySelectorAll('[data-sw]'), function(b){ b.setAttribute('aria-pressed', b.getAttribute('data-sw') === sd ? 'true' : 'false'); });
+  var ad = rb.querySelector('.vw-adm'); if (ad) ad.hidden = sd !== 'admin';
   sb.setAttribute('data-side', sd); sb.textContent = si[1]; box.setAttribute('data-side', sd);
   var i = ORDER.indexOf(key); document.getElementById('prev').disabled = i <= 0; document.getElementById('next').disabled = i >= ORDER.length - 1;
   document.getElementById('back').disabled = !hist.length;
