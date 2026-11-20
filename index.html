@@ -2927,8 +2927,9 @@ function morph(a, b){ // patch live node a to look like freshly built node b (ke
   if (a.nodeType !== 1) return a;
   var i, at;
   for (i = a.attributes.length - 1; i >= 0; i--){ at = a.attributes[i]; if (!b.hasAttribute(at.name)) a.removeAttribute(at.name); }
+  var prevVal = a.getAttribute('value'); // ค่าที่ผู้ใช้พิมพ์ไว้ ไม่ถูกเขียนทับ เว้นแต่ค่าในเทมเพลตเปลี่ยนจริง
   for (i = 0; i < b.attributes.length; i++){ at = b.attributes[i]; if (a.getAttribute(at.name) !== at.value) a.setAttribute(at.name, at.value); }
-  if ('value' in a && b.hasAttribute('value') && a.value !== b.getAttribute('value') && a !== a.getRootNode().activeElement) a.value = b.getAttribute('value');
+  if ('value' in a && b.hasAttribute('value') && b.getAttribute('value') !== prevVal && a.value !== b.getAttribute('value') && a !== a.getRootNode().activeElement) a.value = b.getAttribute('value');
   if ('checked' in a) a.checked = b.hasAttribute('checked');
   bindEvents(a, b.__ev); a.__ref = b.__ref;
   var ac = a.firstChild, bc = b.firstChild;
@@ -3599,6 +3600,7 @@ function actMount(key, root){
   if (actTimer){ clearInterval(actTimer); actTimer = null; }
   if (/^(BC06|BC08)-/.test(key)) CTX.actRun = null; // เริ่มกิจกรรมใหม่ / จบกิจกรรมแล้ว
   var cfg = ACT[key]; if (!cfg) return;
+  if (cfg.clock && CTX.ava && CTX.ava.m) cfg = {t: CTX.ava.m * 60000, clock: true, bell: true, ring: true}; // เวลาที่ผู้ใช้ตั้งไว้ใน BC06-CH
   var links = root.querySelectorAll('.foot a.helper'), skip = [].filter.call(links, function(a){ return /จำลองเวลาผ่าน/.test(a.textContent); }).pop(); if (!skip) return;
   var nm = /([A-Za-z0-9_.-]+)\.dc\.html/.exec(skip.getAttribute('href') || ''), next = nm && nm[1]; if (!next || !S[next]) return;
   var bar = root.querySelector('.pbar > i'), mk = root.querySelector('.pbar .wm-cp-mk'), from = bar ? parseFloat(bar.style.width) || 0 : 0;
@@ -3869,10 +3871,12 @@ function avStack(doc){ // ชั้นบนวางทับชั้นล่
 function avaMount(key, root){
   if (!/^BC06-(CH|CP|CO|TB|KT|PP)$/.test(key) || !cur || !cur.comp) return;
   var a = CTX.ava;
-  if (a) try { cur.comp.setState({o: a.o, h: a.h, c: a.c, s: a.s}); } catch (e) {}
+  if (a) try { cur.comp.setState(a.m != null && key === 'BC06-CH' ? {o: a.o, h: a.h, c: a.c, s: a.s, m: a.m} : {o: a.o, h: a.h, c: a.c, s: a.s}); } catch (e) {}
+  var sn = root.querySelector('#sn'); if (a && a.name && sn) sn.value = a.name;
   function rec(){ setTimeout(function(){
     var st = (cur && cur.comp && cur.comp.state) || {}, inp = root.querySelector('#sn'), n = inp ? inp.value.trim() : '';
-    CTX.ava = {o: st.o != null ? st.o : 2, h: st.h != null ? st.h : 0, c: st.c != null ? st.c : 2, s: st.s != null ? st.s : 1, name: n || 'ผู้เข้าร่วม'}; saveCtx();
+    var pm = CTX.ava && CTX.ava.m;
+    CTX.ava = {o: st.o != null ? st.o : 2, h: st.h != null ? st.h : 0, c: st.c != null ? st.c : 2, s: st.s != null ? st.s : 1, name: n || 'ผู้เข้าร่วม', m: key === 'BC06-CH' && st.m != null ? st.m : pm}; saveCtx();
     root.querySelectorAll('.wm-ava-name').forEach(function(el){ el.textContent = CTX.ava.name; });
   }, 0); }
   root.addEventListener('click', rec); root.addEventListener('keydown', rec); root.addEventListener('input', rec);
